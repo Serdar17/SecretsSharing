@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Ardalis.Result;
 using Domain.Models;
 using Microsoft.AspNetCore.Identity;
@@ -58,17 +57,67 @@ public class UserService : IUserService
         
         var authClaims = new List<Claim>()
         {
-            new (ClaimTypes.Name, userExists.Email)
+            new (ClaimTypes.Email, userExists.Email),
+            new ("Id", userExists.Id.ToString())
         };
         
         var accessToken = _tokenService.GenerateToken(authClaims);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         userExists.RefreshToken = refreshToken;
-        userExists.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtOption.RefreshTokenExpiryDurationDays);
+        userExists.RefreshTokenExpiryTime = DateTime.Now.AddDays(_jwtOption.RefreshTokenExpiryDurationDays);
 
         await _userRepository.UpdateAsync(userExists, cancellationToken);
         
         return new AuthResponse(userExists.Id, userExists.Email, accessToken, refreshToken);
+    }
+
+    public async Task<Result<ApplicationUser>> GetUserByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.GetUserByIdAsync(id, cancellationToken);
+
+        if (user is null)
+        {
+            Result.NotFound($"User with this id={id} not exists");
+        }
+
+        return user;
+    }
+    
+    public async Task<Result<TokenApiDto>> RefreshTokenAsync(TokenApiDto tokenApiModel)
+    {
+        var accessToken = tokenApiModel.AccessToken;
+        var refreshToken = tokenApiModel.RefreshToken;
+
+        var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
+
+        if (principal is null)
+        {
+            return Result.Error("Invalid access token or refresh token");
+        }
+        
+        var userId = principal.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
+        
+        var user = await _userRepository.GetUserByIdAsync(Guid.Parse(userId));
+        
+        if (user == null || user.RefreshToken != refreshToken ||
+            user.RefreshTokenExpiryTime <= DateTime.Now)
+        {
+            return Result.Error("Invalid access token or refresh token");
+        }
+        
+        var newAccessToken = _tokenService.GenerateToken(principal.Claims.ToList());
+        var newRefreshToken = _tokenService.GenerateRefreshToken();
+        
+        user.RefreshToken = newRefreshToken;
+        user.RefreshTokenExpiryTime = DateTime.Now.AddDays(_jwtOption.RefreshTokenExpiryDurationDays);
+        
+        await _userRepository.UpdateAsync(user);
+
+        return Result.Success(new TokenApiDto()
+        {
+            AccessToken = newAccessToken,
+            RefreshToken = newRefreshToken
+        });
     }
 }

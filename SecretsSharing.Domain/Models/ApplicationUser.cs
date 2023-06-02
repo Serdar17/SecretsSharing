@@ -12,5 +12,5 @@ public class ApplicationUser : BaseEntity<Guid>
     
     public DateTime RefreshTokenExpiryTime { get; set; }
 
-    public List<File> Files { get; set; } = new();
+    public List<FileDetails> Files { get; set; } = new();
 }

@@ -54,7 +54,7 @@ app.UseStaticFiles();
 
 app.UseExceptionHandler("/Error");
 app.UseHsts();
-
+app.UseStaticFiles();
 // app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseRouting();

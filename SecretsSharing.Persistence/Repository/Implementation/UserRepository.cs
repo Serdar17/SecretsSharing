@@ -28,6 +28,14 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<ApplicationUser?> GetUserByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Users
+            .Where(x => x.Id.Equals(id))
+            .Include(x => x.Files)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task UpdateAsync(ApplicationUser user, CancellationToken cancellationToken = default)
     {
         _dbContext.Users.Update(user);

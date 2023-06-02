@@ -74,4 +74,17 @@ public class AuthController : ApiController
             Message = result.Errors.FirstOrDefault()
         });
     }
+    
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshToken([FromBody] TokenApiDto tokenApiModel)
+    {
+        var result = await _userService.RefreshTokenAsync(tokenApiModel);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return BadRequest(result.Errors);
+    }
 }

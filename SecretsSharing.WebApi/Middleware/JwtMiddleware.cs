@@ -1,8 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WebApi.Options;
+using WebApi.Services.Interfaces;
 
 namespace WebApi.Middleware;
 
@@ -11,23 +13,24 @@ public class JwtMiddleware
     private readonly RequestDelegate _next;
     private readonly JwtOption _jwtSetting;
 
-    public JwtMiddleware(RequestDelegate next, IOptions<JwtOption> optionsSnapshot)
+    public JwtMiddleware(RequestDelegate next, 
+        IOptions<JwtOption> optionsSnapshot)
     {
         _next = next;
         _jwtSetting = optionsSnapshot.Value;
     }
     
-    public async Task Invoke(HttpContext context)
+    public async Task Invoke(HttpContext context, [FromServices] IUserService _userService)
     {
         var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
         if (token != null)
-            AttachAccountToContext(context, token);
+            await AttachAccountToContextAsync(context, token, _userService);
 
         await _next(context);
     }
     
-    private void AttachAccountToContext(HttpContext context, string token)
+    private async Task AttachAccountToContextAsync(HttpContext context, string token, IUserService _userService)
     {
         try
         {
@@ -37,23 +40,20 @@ public class JwtMiddleware
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = true,
-                ValidateAudience = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
                 ClockSkew = TimeSpan.Zero
             }, out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
-            var accountId = jwtToken.Claims.First(x => x.Type == "id").Value;
-
-            // attach account to context on successful jwt validation
-            // context.Items["User"] = _userService.GetUserDetails();
-            // context.Items["User"] = accountId;
+            var accountId = jwtToken.Claims.First(x => x.Type == "Id").Value;
+            var result = await _userService.GetUserByIdAsync(Guid.Parse(accountId));
+            context.Items["User"] = result.Value;
         }
         catch
         {
-            // do nothing if jwt validation fails
-            // account is not attached to context so request won't have access to secure routes
-            // TODO: Сделать редирект на странцу регистрации
+            context.Response.StatusCode = 400;
+            await context.Response.WriteAsync("Something went wrong...");
         }
     }
 }

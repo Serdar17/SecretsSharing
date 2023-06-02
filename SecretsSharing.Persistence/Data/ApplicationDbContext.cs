@@ -1,7 +1,6 @@
 ﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using SecretsSharing.Persistence.Interfaces;
-using File = Domain.Models.File;
 
 namespace SecretsSharing.Persistence.Data;
 
@@ -18,5 +17,5 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<ApplicationUser> Users { get; set; } = null!;
 
-    public DbSet<File> Files { get; set; } = null!;
+    public DbSet<FileDetails> Files { get; set; } = null!;
 }

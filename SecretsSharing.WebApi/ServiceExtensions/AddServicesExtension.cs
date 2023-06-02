@@ -1,6 +1,4 @@
-﻿using Domain.Models;
-using Microsoft.AspNetCore.Identity;
-using WebApi.Services.Implementation;
+﻿using WebApi.Services.Implementation;
 using WebApi.Services.Interfaces;
 
 namespace WebApi.ServiceExtensions;

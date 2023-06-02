@@ -3,7 +3,7 @@ using Domain.Primitives;
 
 namespace Domain.Models;
 
-public class File : BaseEntity<Guid>
+public class FileDetails : BaseEntity<Guid>
 {
     public string FileName { get; set; }
     

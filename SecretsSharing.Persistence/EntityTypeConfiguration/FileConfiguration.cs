@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using File = Domain.Models.File;
 
 namespace SecretsSharing.Persistence.EntityTypeConfiguration;
 
-public class FileConfiguration : IEntityTypeConfiguration<File>
+public class FileConfiguration : IEntityTypeConfiguration<FileDetails>
 {
-    public void Configure(EntityTypeBuilder<File> builder)
+    public void Configure(EntityTypeBuilder<FileDetails> builder)
     {
         builder.HasKey(x => x.Id);
 
