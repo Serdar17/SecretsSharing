@@ -25,8 +25,11 @@ public class FileService : IFileService
         var user = await _userRepository.GetUserByIdAsync(userId, cancellationToken);
         
         var fileName = Path.GetFileName(uploadFileDto.File.FileName);
-       
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "upload/files", fileName);
+
+        var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "upload/files");
+        CreateDirectoryIfNotExists(rootPath);
+
+        var filePath = Path.Combine(rootPath, fileName);
 
         await using var localFile = File.OpenWrite(filePath);
 
@@ -57,6 +60,12 @@ public class FileService : IFileService
         {
             return Result.Error($"File with id={id} not found");
         }
+
+        if (!File.Exists(fileDetails.Path))
+        {
+            await _fileRepository.DeleteAsync(fileDetails, cancellationToken);
+            return Result.Error($"File with id={id} not found");
+        }
         
         var memory = new MemoryStream();
         
@@ -81,9 +90,12 @@ public class FileService : IFileService
         var user = await _userRepository.GetUserByIdAsync(userId, cancellationToken);
         
         var fileName = Path.Combine($"{Path.GetRandomFileName()}.txt");
-       
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "upload/texts", fileName);
 
+        var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "upload/texts");
+        CreateDirectoryIfNotExists(rootPath);
+
+        var filePath = Path.Combine(rootPath, fileName);
+        
         await using var outputFile = new StreamWriter(filePath);
         
         await outputFile.WriteAsync(uploadTextFileDto.Text);
@@ -136,6 +148,18 @@ public class FileService : IFileService
         await DeleteFileAsync(file, cancellationToken);
         
         return Result.Success();
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="rootPath"></param>
+    private static void CreateDirectoryIfNotExists(string rootPath)
+    {
+        if (!Directory.Exists(rootPath))
+        {
+            Directory.CreateDirectory(rootPath);
+        }
     }
 
     /// <summary>
