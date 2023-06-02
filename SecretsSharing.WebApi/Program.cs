@@ -50,22 +50,20 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseStaticFiles();
-// app.UseCustomExceptionHandle();
 
 app.UseExceptionHandler("/Error");
 app.UseHsts();
 app.UseStaticFiles();
-// app.UseSerilogRequestLogging();
+
 app.UseHttpsRedirection();
 app.UseRouting();
+
 app.UseCors("EnableCORS");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<JwtMiddleware>();
-
-// app.MapDefaultControllerRoute();
 app.MapControllers();
 
 app.Run();

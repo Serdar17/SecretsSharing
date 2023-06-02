@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SecretsSharing.Persistence.Data;
-using SecretsSharing.Persistence.Interfaces;
 using SecretsSharing.Persistence.Repository.Implementation;
 using SecretsSharing.Persistence.Repository.Interfaces;
 

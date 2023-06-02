@@ -4,8 +4,16 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace WebApi.ServiceExtensions;
 
+/// <summary>
+/// extension class for configuring authentication
+/// </summary>
 public static class ConfigureAuthenticationExtension
 {
+    /// <summary>
+    /// method for configuring authentication
+    /// </summary>
+    /// <param name="services">IServiceCollection object</param>
+    /// <param name="configuration">configuration from appsettings.json</param>
     public static void ConfigureAuthentication(this IServiceCollection services, 
         IConfiguration configuration)
     {

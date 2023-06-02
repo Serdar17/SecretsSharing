@@ -3,8 +3,15 @@ using Microsoft.OpenApi.Models;
 
 namespace WebApi.ServiceExtensions;
 
+/// <summary>
+/// extension class for swagger configuration
+/// </summary>
 public static class ConfigureSwaggerExtension
 {
+    /// <summary>
+    /// method for swagger configuration
+    /// </summary>
+    /// <param name="services">IServiceCollection object</param>
     public static void ConfigureSwagger(this IServiceCollection services)
     {
         services.AddSwaggerGen(swagger =>

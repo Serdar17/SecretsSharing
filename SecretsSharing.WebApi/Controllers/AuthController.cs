@@ -19,10 +19,10 @@ public class AuthController : ApiController
     }
     
     /// <summary>
-    /// 
+    /// Enpoint for user registration
     /// </summary>
-    /// <param name="authorizationModel"></param>
-    /// <returns></returns>
+    /// <param name="authorizationModel">Authorization model with password and user login</param>
+    /// <returns>Message about successful authorization</returns>
     [HttpPost("register")]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -49,10 +49,10 @@ public class AuthController : ApiController
     }
     
     /// <summary>
-    /// 
+    /// Endpoint for user authorization
     /// </summary>
-    /// <param name="authorizationModel"></param>
-    /// <returns></returns>
+    /// <param name="authorizationModel">Authorization model with password and user login</param>
+    /// <returns>Model with user, access and refresh tokens</returns>
     [HttpPost("login")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
@@ -75,6 +75,11 @@ public class AuthController : ApiController
         });
     }
     
+    /// <summary>
+    /// Endpoint for refresh token
+    /// </summary>
+    /// <param name="tokenApiModel">Model with access and refresh tokens</param>
+    /// <returns>Object with new access and refresh tokens</returns>
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken([FromBody] TokenApiDto tokenApiModel)
     {

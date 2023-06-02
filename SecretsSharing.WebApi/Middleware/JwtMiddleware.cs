@@ -8,6 +8,9 @@ using WebApi.Services.Interfaces;
 
 namespace WebApi.Middleware;
 
+/// <summary>
+/// Middleware for attach user to the context
+/// </summary>
 public class JwtMiddleware
 {
     private readonly RequestDelegate _next;
@@ -20,6 +23,11 @@ public class JwtMiddleware
         _jwtSetting = optionsSnapshot.Value;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="_userService"></param>
     public async Task Invoke(HttpContext context, [FromServices] IUserService _userService)
     {
         var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
@@ -30,6 +38,12 @@ public class JwtMiddleware
         await _next(context);
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="token"></param>
+    /// <param name="_userService"></param>
     private async Task AttachAccountToContextAsync(HttpContext context, string token, IUserService _userService)
     {
         try

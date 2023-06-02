@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Domain.Models;
+﻿using Domain.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +12,16 @@ public class FileController : ApiController
 {
     private readonly IFileService _fileService;
 
-    public FileController(IMapper mapper, IFileService fileService)
+    public FileController(IFileService fileService)
     {
         _fileService = fileService;
     }
 
     /// <summary>
-    /// 
+    /// Endpoint for upload file
     /// </summary>
-    /// <param name="uploadFileDto"></param>
-    /// <returns></returns>
+    /// <param name="uploadFileDto">The model that contains the file</param>
+    /// <returns>Uri to the file</returns>
     [HttpPost("upload-file")]
     [ProducesResponseType(typeof(Uri), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -41,10 +40,10 @@ public class FileController : ApiController
     }
 
     /// <summary>
-    /// 
+    /// Endpoint for upload text file
     /// </summary>
-    /// <param name="uploadTextFileDto"></param>
-    /// <returns></returns>
+    /// <param name="uploadTextFileDto">The model that contains the text as string</param>
+    /// <returns>Uri to the text file</returns>
     [HttpPost("upload-text")]
     [ProducesResponseType(typeof(Uri), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -63,10 +62,10 @@ public class FileController : ApiController
     }
     
     /// <summary>
-    /// 
+    /// Endpoint for download file by id
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">Unique id of the uploaded file</param>
+    /// <returns>The required file to upload</returns>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(File), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -84,10 +83,10 @@ public class FileController : ApiController
     }
 
     /// <summary>
-    /// 
+    /// Endpoint to get all files of the current user
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">Unique user id</param>
+    /// <returns>List of uri with all the files of the current user</returns>
     [HttpGet("get-files/{id:guid}")]
     [ProducesResponseType(typeof(IEnumerable<Uri>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -107,10 +106,10 @@ public class FileController : ApiController
     }
 
     /// <summary>
-    /// 
+    /// Endpoint
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">Unique id the file</param>
+    /// <returns>No content if the file is deleted successfully</returns>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

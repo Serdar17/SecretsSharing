@@ -138,6 +138,11 @@ public class FileService : IFileService
         return Result.Success();
     }
 
+    /// <summary>
+    /// method for getting file content type
+    /// </summary>
+    /// <param name="path">File path</param>
+    /// <returns>Content type as string</returns>
     private string GetContentType(string path)
     {
         var types = GetMimeTypes();
@@ -145,6 +150,10 @@ public class FileService : IFileService
         return types[ext];
     }
     
+    /// <summary>
+    /// method for getting all mime types
+    /// </summary>
+    /// <returns></returns>
     private Dictionary<string, string> GetMimeTypes()
     {
         return new Dictionary<string, string>
