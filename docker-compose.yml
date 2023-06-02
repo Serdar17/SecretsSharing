@@ -1,0 +1,35 @@
+﻿version: "3.9"
+networks:
+  secrets_sharing-dev:
+    driver: bridge
+services:
+  app:
+    image: docker.io/library/secrets_sharing
+    container_name: secrets_sharing
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - secrets_sharing-dev
+    depends_on:
+      - postgres_db
+    environment:
+      - ConnectionString__DefaultConnection=Server=postgres_db;Port=5432;User ID=postgres;Password=1234;Database=postgres;TrustServerCertificate=True;Pooling=true;
+  postgres_db:
+    container_name: postgres_sharing
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    restart: always
+    networks:
+      - secrets_sharing-dev
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+volumes:
+  postgres-data:
